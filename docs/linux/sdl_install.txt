@@ -1,0 +1,6 @@
+1. You can download the latest .tar.gz SDL binaries here: https://www.libsdl.org/download-2.0.php#source
+2. Extract the tarball
+3. In command prompt, `cd` to the file you just extracted and run ./configure
+4. In command prompt, run `make all`
+5. In command prompt, run `make install`
+6. SDL binaries should now be installed and ready for use
