@@ -1,0 +1,11 @@
+ONLY WORKS FOR NVIDIA CARDS
+
+1. In command prompt, run `sudo apt-get update`
+2. In command prompt, run `sudo apt-get install linux-headers-generic`
+3. In command prompt, run `sudo apt-get dist-upgrade`
+4. In command prompt, run `sudo reboot`
+5. In command prompt, Wait for computer to restart
+6. In command prompt, `sudo apt-get install nvidia-current-updates `
+7. In command prompt, `sudo nvidia-xconfig`
+8. In command prompt, `sudo reboot`
+9. After booting up, you should have the most up to date version of nVidia drivers
