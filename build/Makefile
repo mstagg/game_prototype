@@ -10,7 +10,7 @@ COMPILER_FLAGS = -w
 
 ifeq ($(OS),Windows_NT)
     #LINKER_FLAGS specifies the libraries we're linking against 
-    LINKER_FLAGS = -lglew32 -lopengl32 -lSDL2
+    LINKER_FLAGS = -lglew32s -lopengl32 -lSDL2
 else
     LINKER_FLAGS = -lSDL2 -lGL -lGLEW
 endif

@@ -14,6 +14,7 @@
 // If compiling to windows, SDL_MAIN_HANDLED must be defined before including SDL.h
 #if OPERATING_SYS == WINDOWS
     #define SDL_MAIN_HANDLED
+    #define GLEW_STATIC
 #endif
 
 #include <SDL2/SDL.h>
