@@ -8,8 +8,12 @@ CC = g++
 # -w suppresses all warnings 
 COMPILER_FLAGS = -w 
 
-#LINKER_FLAGS specifies the libraries we're linking against 
-LINKER_FLAGS = -lSDL2 -lGL -lGLEW
+ifeq ($(OS),Windows_NT)
+    #LINKER_FLAGS specifies the libraries we're linking against 
+    LINKER_FLAGS = -lglew32 -lglu32 -lopengl32 -lSDL2
+else
+    LINKER_FLAGS = -lSDL2 -lGL -lGLEW
+endif
 
 #OBJ_NAME specifies the name of our exectuable 
 OBJ_NAME = prototype
