@@ -1,0 +1,3 @@
+1. Get GNUwin32 installer here: http://gnuwin32.sourceforge.net/packages/make.htm
+2. Run installer
+3. Add installation bin directory to system PATH

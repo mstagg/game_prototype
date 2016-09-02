@@ -1,0 +1,5 @@
+1. Download SDL development binaries here: https://www.libsdl.org/download-2.0.php (May need 7zip)
+2. Unzip the files
+3. Copy the .a files from the appropriate lib directory to the MinGW\lib directory (the exact location of which will vary depending on where you installed MinGW).
+4. Copy the SDL directory from the appropriate include directory to the MinGW\include directory (the exact location of which will vary depending on where you installed MinGW).
+5. Copy SDL2.dll from the appropriate bin directory to the directory where your executable will be created.
