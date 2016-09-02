@@ -1,5 +1,20 @@
 
-#define SDL_MAIN_HANDLED
+#define WINDOWS 0
+#define MAC 1
+#define UNIX 2
+
+#if defined(_WIN32)
+    #define OPERATING_SYS WINDOWS
+#elif defined(__APPLE__)
+    #define OPERATING_SYS MAC
+#else
+    #define OPERATING_SYS UNIX
+#endif
+
+// If compiling to windows, SDL_MAIN_HANDLED must be defined before including SDL.h
+#if OPERATING_SYS == WINDOWS
+    #define SDL_MAIN_HANDLED
+#endif
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
