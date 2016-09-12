@@ -119,129 +119,136 @@ void quit()
 	SDL_Quit();
 }
 
+const char* vertexShader =
+"#version 430\r\n"
+""
+"in layout(location=0) vec2 position;"
+"in layout(location=1) vec3 vertexColor;"
+""
+"out vec3 theColor;"
+""
+"void main()"
+"{"
+"gl_Position = vec4(position, 0.0, 1.0);"
+"theColor = vertexColor;"
+"}";
+
+const char* fragmentShader =
+"#version 430\r\n"
+""
+"in vec3 theColor;"
+"out vec4 color;"
+""
+"void main()"
+"{"
+"color = vec4(theColor, 1.0);"
+"}";
+
+void installShaders()
+{
+	GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
+	GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+
+	const char* adapter[1];
+	adapter[0] = vertexShader;
+	glShaderSource(vertexShaderId, 1, adapter, 0);
+	adapter[0] = fragmentShader;
+	glShaderSource(fragmentShaderId, 1, adapter, 0);
+
+	glCompileShader(vertexShaderId);
+	glCompileShader(fragmentShaderId);
+
+	GLint err1, err2;
+	glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &err1);
+	glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &err2);
+
+	if(err1 != GL_TRUE)
+	{
+		GLint infoLogLength;
+		glGetShaderiv(vertexShaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GLchar* buffer = new GLchar[infoLogLength];
+
+		GLsizei bufferSize;
+		glGetShaderInfoLog(vertexShaderId, infoLogLength, &bufferSize, buffer);
+		printf("VERTEX SHADER ERROR: %i, '%s'", err1, buffer);
+
+		delete buffer;
+	}
+
+	if(err2 != GL_TRUE)
+	{
+		GLint infoLogLength;
+		glGetShaderiv(fragmentShaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GLchar* buffer = new GLchar[infoLogLength];
+
+		GLsizei bufferSize;
+		glGetShaderInfoLog(fragmentShaderId, infoLogLength, &bufferSize, buffer);
+		printf("FRAGMENT SHADER ERROR: %i, '%s'", err2, buffer);
+
+		delete buffer;
+	}
+
+	glGetProgramiv(vertexShaderId, GL_COMPILE_STATUS, &err1);
+	if(err1 != GL_TRUE)
+	{
+		GLint infoLogLength;
+		glGetProgramiv(vertexShaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GLchar* buffer = new GLchar[infoLogLength];
+
+		GLsizei bufferSize;
+		glGetProgramInfoLog(vertexShaderId, infoLogLength, &bufferSize, buffer);
+		printf("LINKER ERROR: %i, '%s'", err1, buffer);
+
+		delete buffer;
+	}
+
+	GLuint programId = glCreateProgram();
+	glAttachShader(programId, vertexShaderId);
+	glAttachShader(programId, fragmentShaderId);
+	glLinkProgram(programId);
+
+	glUseProgram(programId);
+}
+
 int main( int argc, char* args[] )
 {
 	if(init())
 	{
-
-float points[] = {
-   0.0f,  0.5f,  0.0f,
-   0.25f, -0.25f,  0.0f,
-  -0.25f, -0.25f,  0.0f
-};
-
-float morePoints[] = {
-   0.0f,  0.25f,  0.0f,
-   0.125f, -0.125f,  0.0f,
-  -0.125f, -0.125f,  0.0f
-};
-
-GLuint vbo = 0;
-glGenBuffers (1, &vbo);
-glBindBuffer (GL_ARRAY_BUFFER, vbo);
-glBufferData (GL_ARRAY_BUFFER, 9 * sizeof (float), points, GL_STATIC_DRAW);
-
-GLuint vbo1 = 1;
-glGenBuffers (1, &vbo1);
-glBindBuffer (GL_ARRAY_BUFFER, vbo1);
-glBufferData (GL_ARRAY_BUFFER, 9 * sizeof (float), morePoints, GL_STATIC_DRAW);
-
-GLuint vao = 0;
-glGenVertexArrays (1, &vao);
-glBindVertexArray (vao);
-glEnableVertexAttribArray (0);
-glBindBuffer (GL_ARRAY_BUFFER, vbo);
-glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-GLuint vao1 = 1;
-glGenVertexArrays (1, &vao1);
-glBindVertexArray (vao1);
-glEnableVertexAttribArray (0);
-glBindBuffer (GL_ARRAY_BUFFER, vbo1);
-glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-const char* vertex_shader =
-"#version 400\n"
-"in vec3 vp;"
-"void main () {"
-"  gl_Position = vec4 (vp, 1.0);"
-"}";
-
-const char* fragment_shader =
-"#version 400\n"
-"out vec4 frag_colour;"
-"void main () {"
-"  frag_colour = vec4 (1.0, 1.0, 0.0, 1.0);"
-"}";
-
-const char* fragment_shader2 =
-"#version 400\n"
-"out vec4 frag_colour;"
-"void main () {"
-"  frag_colour = vec4 (1.0, 0.0, 0.0, 1.0);"
-"}";
-
-GLuint vs = glCreateShader (GL_VERTEX_SHADER);
-glShaderSource (vs, 1, &vertex_shader, NULL);
-glCompileShader (vs);
-GLuint fs = glCreateShader (GL_FRAGMENT_SHADER);
-glShaderSource (fs, 1, &fragment_shader, NULL);
-glCompileShader (fs);
-GLuint fs2 = glCreateShader (GL_FRAGMENT_SHADER);
-glShaderSource (fs2, 1, &fragment_shader2, NULL);
-glCompileShader (fs2);
-
-GLuint shader_programme = glCreateProgram ();
-glAttachShader (shader_programme, fs);
-glAttachShader (shader_programme, vs);
-glLinkProgram (shader_programme);
-
-GLuint shader_programme2 = glCreateProgram ();
-glAttachShader (shader_programme2, fs2);
-glAttachShader (shader_programme2, vs);
-glLinkProgram (shader_programme2);
-
-// wipe the drawing surface clear
-glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-glUseProgram (shader_programme);
-glBindVertexArray (vao);
-// draw points 0-3 from the currently bound VAO with current in-use shader
-glDrawArrays (GL_TRIANGLES, 0, 3);
-
-glUseProgram (shader_programme2);
-glBindVertexArray (vao1);
-// draw points 0-3 from the currently bound VAO with current in-use shader
-glDrawArrays (GL_TRIANGLES, 0, 3);
-
-SDL_GL_SwapWindow(window);
-
-/*
-
-		// Clear window to black
-		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		installShaders();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		SDL_GL_SwapWindow(window);
 
-		// Clear window to red
-		glClearColor(1.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLfloat verts[]
+		{
+			0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			1.0f, 1.0f,
+			0.0f, 1.0f, 0.0f,
+			-1.0f, 1.0f,
+			1.0f, 0.0f, 0.0f
+		};
+
+		GLuint bufferId;
+		GLuint indexBufferID;
+
+		glGenBuffers(1, &bufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, bufferId);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, 0);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 5, (char *)(sizeof(GLfloat) * 2));
+
+		GLushort indices[] = {0, 1, 2, 0, 3, 4};
+		glGenBuffers(1, &indexBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		SDL_GL_SwapWindow(window);
 
-		SDL_Delay(2000);
-
-		// Clear window to green
-		glClearColor(0.0, 1.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
-		SDL_GL_SwapWindow(window);
-
-		SDL_Delay(2000);
-
-		// Clear window to blue
-		glClearColor(0.0, 0.0, 1.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
-		SDL_GL_SwapWindow(window);
-*/
 		SDL_Delay(5000);
 	}
 
