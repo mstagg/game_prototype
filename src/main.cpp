@@ -21,6 +21,9 @@
 #include <GL/glew.h>
 #include <stdio.h>
 
+#include "libs/imgui/imgui.h"
+#include "imgui_impl_sdl_gl3.h"
+
 #define GL3_PROTOTYPES 1
 
 //Screen dimension constants
@@ -59,6 +62,7 @@ bool initWindow()
 	}
 	else
 	{
+		ImGui_ImplSdlGL3_Init(window);
 		return true;
 	}
 }
@@ -231,6 +235,13 @@ int main( int argc, char* args[] )
 
 		GLuint bufferId;
 		GLuint indexBufferID;
+bool done = false;
+		bool show_test_window = true;
+
+		while(!done)
+		{
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glGenBuffers(1, &bufferId);
 		glBindBuffer(GL_ARRAY_BUFFER, bufferId);
@@ -247,11 +258,29 @@ int main( int argc, char* args[] )
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            ImGui_ImplSdlGL3_ProcessEvent(&event);
+            if (event.type == SDL_QUIT)
+                done = true;
+        }
+ImGui_ImplSdlGL3_NewFrame(window);
+            ImGui::SetNextWindowSize(ImVec2(200,100), ImGuiSetCond_FirstUseEver);
+            ImGui::Begin("Another Window", &show_test_window);
+            ImGui::Text("Hello");
+            ImGui::End();
+
+		glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+		ImGui::Render();
 		SDL_GL_SwapWindow(window);
 
-		SDL_Delay(5000);
+		SDL_Delay(16);
+		}
 	}
 
+ImGui_ImplSdlGL3_Shutdown();
 	quit();
 	return 0;
 }
