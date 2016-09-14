@@ -1,4 +1,30 @@
+#include "com/Broker.h"
 
+#include <stdio.h>
+
+//TODO: Build a consumer on a new thread
+
+int main()
+{
+	Broker* b = new Broker();
+
+	b->addSubscription("test 1");
+	b->addSubscription("test 2");
+
+	Message* m = new Message("msg 1");
+	b->addMessage("test 1", m);
+
+	printf("%s\r\n", b->getMessage("test 1")->payload.c_str());
+	printf("%s\r\n", b->getMessage("test 1")->payload.c_str());
+
+	delete m;
+
+	delete b;
+
+	return 0;
+}
+
+/*
 #define WINDOWS 0
 #define MAC 1
 #define UNIX 2
@@ -235,7 +261,7 @@ int main( int argc, char* args[] )
 
 		GLuint bufferId;
 		GLuint indexBufferID;
-bool done = false;
+		bool done = false;
 		bool show_test_window = true;
 
 		while(!done)
@@ -284,4 +310,4 @@ ImGui_ImplSdlGL3_Shutdown();
 	quit();
 	return 0;
 }
-
+*/

@@ -1,6 +1,6 @@
 #OBJS specifies which files to compile as part of the project 
-OBJS = ../src/main.cpp ../src/imgui_impl_sdl_gl3.cpp ../src/libs/imgui/imgui*.cpp
-
+#OBJS = ../src/main.cpp ../src/imgui_impl_sdl_gl3.cpp ../src/libs/imgui/imgui*.cpp
+OBJS = ../src/main.cpp ../src/com/Broker.cpp ../src/com/Subscription.cpp ../src/com/Message.cpp
 #CC specifies which compiler we're using 
 CC = g++ 
 
